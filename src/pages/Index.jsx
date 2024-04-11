@@ -1,15 +1,52 @@
-// Complete the Index page component here
-// Use chakra-ui
-import { Button } from "@chakra-ui/react"; // example
-import { FaPlus } from "react-icons/fa"; // example - use react-icons/fa for icons
+import { useState } from "react";
+import { Box, Input, Button, List, ListItem, ListIcon, IconButton, Checkbox, Heading, VStack } from "@chakra-ui/react";
+import { FaTrash, FaPlus } from "react-icons/fa";
 
 const Index = () => {
-  // TODO: Create the website here!
+  const [tasks, setTasks] = useState([]);
+  const [input, setInput] = useState("");
+
+  const handleAddTask = () => {
+    if (input.trim() !== "") {
+      const newTask = {
+        id: Date.now(),
+        text: input,
+        isCompleted: false,
+      };
+      setTasks([...tasks, newTask]);
+      setInput("");
+    }
+  };
+
+  const handleDeleteTask = (id) => {
+    setTasks(tasks.filter((task) => task.id !== id));
+  };
+
+  const handleToggleTask = (id) => {
+    setTasks(tasks.map((task) => (task.id === id ? { ...task, isCompleted: !task.isCompleted } : task)));
+  };
+
   return (
-    <Button>
-      Hello world! <FaPlus />
-    </Button>
-  ); // example
+    <VStack p={4}>
+      <Heading mb="8">Todo List</Heading>
+      <Box>
+        <Input placeholder="Add a new task" value={input} onChange={(e) => setInput(e.target.value)} size="md" mr={2} />
+        <Button onClick={handleAddTask} leftIcon={<FaPlus />} colorScheme="blue">
+          Add
+        </Button>
+      </Box>
+      <List spacing={3} mt={4} w="100%">
+        {tasks.map((task) => (
+          <ListItem key={task.id} display="flex" justifyContent="space-between" alignItems="center">
+            <Checkbox isChecked={task.isCompleted} onChange={() => handleToggleTask(task.id)}>
+              {task.text}
+            </Checkbox>
+            <IconButton icon={<FaTrash />} onClick={() => handleDeleteTask(task.id)} colorScheme="red" aria-label="Delete task" />
+          </ListItem>
+        ))}
+      </List>
+    </VStack>
+  );
 };
 
 export default Index;
